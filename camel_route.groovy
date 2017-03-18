@@ -1,5 +1,7 @@
 @Grab(group='org.apache.camel', module='camel-core', version='2.18.2')
 @Grab(group='org.apache.camel', module='camel-mail', version='2.18.2')
+@Grab(group='org.apache.camel', module='camel-http4', version='2.18.2')
+@Grab(group='org.apache.camel', module='camel-zipfile', version='2.18.2')
 @Grab(group='ch.qos.logback', module='logback-classic', version='1.2.1')
 
 import org.apache.camel.impl.DefaultCamelContext
