@@ -37,8 +37,8 @@ camelContext.addRoutes(new RouteBuilder() {
   .to("file:download")
   .process({ Exchange exchange ->
     Message msg = exchange.getIn()
-    String newMessage = msg.find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/)
-    msg.setBody("Hello Worolf !!!!!!");
+    String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/)
+    msg.setBody(newMessage)
   })
   .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
   }
