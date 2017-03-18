@@ -24,9 +24,12 @@ camelContext.addRoutes(new RouteBuilder() {
   .to("file:download")
   .process({ Exchange exchange ->
     Message msg = exchange.getIn()
-    String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/)
+    String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/).replace("https:","https4:")
     msg.setBody(newMessage)
   })
+  .toD('${body}?maxRedirects=3')
+  .unmarshal().zipFile()
+  .to("file:facturas")
   .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
   }
 })
