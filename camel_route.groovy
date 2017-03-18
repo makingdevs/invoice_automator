@@ -8,6 +8,7 @@ import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.Exchange
 import org.apache.camel.Message
+import org.apache.camel.dataformat.zipfile.ZipSplitter
 import org.apache.camel.component.mail.MailMessage
 import javax.mail.internet.MimeMultipart
 
@@ -28,7 +29,7 @@ camelContext.addRoutes(new RouteBuilder() {
     msg.setBody(newMessage)
   })
   .toD('${body}?maxRedirects=3')
-  .unmarshal().zipFile()
+  .split(new ZipSplitter()).streaming()
   .to("file:facturas")
   .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
   }
