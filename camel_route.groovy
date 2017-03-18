@@ -35,7 +35,11 @@ camelContext.addRoutes(new RouteBuilder() {
       + "&delete=false&peek=false&unseen=true&consumer.delay=6000&closeFolder=false&disconnect=false")
   //.filter {it.in.headers.subject.contains('factura')}
   .to("file:download")
-  .bean(MyBean, "doSomething")
+  .process({ Exchange exchange ->
+    Message msg = exchange.getIn()
+    String newMessage = msg.find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/)
+    msg.setBody("Hello Worolf !!!!!!");
+  })
   .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
   }
 })
