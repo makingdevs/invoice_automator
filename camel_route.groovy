@@ -11,21 +11,6 @@ import org.apache.camel.Message
 import org.apache.camel.component.mail.MailMessage
 import javax.mail.internet.MimeMultipart
 
-class MyBean {
-  void doSomething(MimeMultipart mailMessage, Exchange exchange) {
-    println "*"*80
-    println "ATTACHMENTS SIZE : ${exchange.in.attachments.size()}"
-    println "ATTACHMENTS : ${exchange.in.attachments}"
-    println "*"*200
-    def body = exchange.getIn().getBody(String)
-    println body
-    new File("salida.txt").write(body)
-    println "*"*200
-    println mailMessage.parts*.message*.bs*.dump()
-    println "-"*80
-  }
-}
-
 def username = "username"
 def password = "password"
 
