@@ -12,30 +12,36 @@ import org.apache.camel.dataformat.zipfile.ZipSplitter
 import org.apache.camel.component.mail.MailMessage
 import javax.mail.internet.MimeMultipart
 
-def username = "username"
-def password = "password"
+def username = System.getenv("USERNAME")
+def password = System.getenv("PASSWORD")
 
 def camelContext = new DefaultCamelContext()
 camelContext.addRoutes(new RouteBuilder() {
   def void configure() {
-  from("imaps://imap.gmail.com?username=${username}"
-      + "&password=${password}"
-      + "&delete=false&peek=false&unseen=true&consumer.delay=6000&closeFolder=false&disconnect=false")
-  //.filter {it.in.headers.subject.contains('factura')}
-  .to("file:download")
-  .process({ Exchange exchange ->
-    Message msg = exchange.getIn()
-    String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/).replace("https:","https4:")
-    msg.setBody(newMessage)
-  })
-  .toD('${body}?maxRedirects=3')
-  .split(new ZipSplitter()).streaming()
-  .to("file:facturas")
-  .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
+    from("imaps://imap.gmail.com?username=${username}"
+        + "&password=${password}"
+        + "&delete=false&peek=false&unseen=true&consumer.delay=6000&closeFolder=false&disconnect=false")
+    .wireTap("log:originalMessage?showHeaders=true")
+    .to("file:download")
+    .process({ Exchange exchange ->
+      Message msg = exchange.getIn()
+      String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/).replace("https:","https4:")
+      msg.setBody(newMessage)
+    })
+    .toD('${body}?maxRedirects=3')
+    .split(new ZipSplitter()).streaming()
+    .to("file:facturas")
+    .to("log:groovymail?showAll=true&multiline=true&showFiles=true")
   }
 })
+//camelContext.addRoutes(new RouteBuilder() {
+//  def void configure() {
+//    from("file:facturas")
+//    .to("file:processed")
+//    .log('${body}')
+//  }
+//})
 camelContext.start()
 
 addShutdownHook{ camelContext.stop() }
 synchronized(this){ this.wait() }
-println "Camel started!!!"
