@@ -26,7 +26,7 @@ dependencies {
 	compile "org.apache.camel:camel-mail:${camelVersion}"
 	compile "org.apache.camel:camel-http4:${camelVersion}"
 	compile "org.apache.camel:camel-zipfile:${camelVersion}"
-	compile 'org.codehaus.groovy:groovy:2.4.10'
+	compile 'org.codehaus.groovy:groovy-all:2.4.10'
 	compile "ch.qos.logback:logback-classic:1.2.1"
 	testCompile "org.apache.camel:camel-test:${camelVersion}"
 }
