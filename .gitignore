@@ -11,3 +11,22 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+.idea/
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+*.log
+download/
