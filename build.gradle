@@ -1,18 +1,32 @@
 apply plugin: 'groovy'
+apply plugin: 'war'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'org.akhikhl.gretty:gretty:+'
+	}
+}
 
 repositories {
-  mavenCentral()
+	mavenCentral()
+  jcenter()
 }
 
 ext {
-  camelVersion = '2.18.2'
+	camelVersion = '2.18.2'
 }
 
 dependencies {
-  compile "org.apache.camel:camel-core:${camelVersion}"
-  compile "org.apache.camel:camel-mail:${camelVersion}"
-  compile "org.apache.camel:camel-http4:${camelVersion}"
-  compile "org.apache.camel:camel-zipfile:${camelVersion}"
-  testCompile "org.apache.camel:camel-test:${camelVersion}"
-  compile "ch.qos.logback:logback-classic:1.2.1"
+	compile "org.apache.camel:camel-core:${camelVersion}"
+	compile "org.apache.camel:camel-mail:${camelVersion}"
+	compile "org.apache.camel:camel-http4:${camelVersion}"
+	compile "org.apache.camel:camel-zipfile:${camelVersion}"
+	compile 'org.codehaus.groovy:groovy:2.4.10'
+	compile "ch.qos.logback:logback-classic:1.2.1"
+	testCompile "org.apache.camel:camel-test:${camelVersion}"
 }
