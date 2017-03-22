@@ -1,5 +1,8 @@
 package com.makingdevs.web
 
+import com.makingdevs.automator.Route1
+import com.makingdevs.automator.Route2
+
 import javax.servlet.ServletContextListener
 import javax.servlet.ServletContextEvent
 import org.apache.camel.CamelContext
@@ -12,6 +15,8 @@ class CamelListener implements ServletContextListener {
 
   void contextInitialized(ServletContextEvent sce) {
     camelContext.addRoutes(new InvoiceRoute())
+    camelContext.addRoutes(new Route1())
+    camelContext.addRoutes(new Route2())
     camelContext.start()
   }
 
