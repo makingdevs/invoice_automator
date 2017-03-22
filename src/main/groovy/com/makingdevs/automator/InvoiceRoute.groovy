@@ -1,11 +1,14 @@
 package com.makingdevs.automator
 
-import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.Exchange
 import org.apache.camel.Message
+import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.dataformat.zipfile.ZipSplitter
 
 class InvoiceRoute extends RouteBuilder {
+
+	def username = System.getenv("USERNAME")
+	def password = System.getenv("PASSWORD")
 
   def void configure() {
     from("imaps://imap.gmail.com?username=${username}"
