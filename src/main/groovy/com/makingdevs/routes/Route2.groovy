@@ -1,4 +1,4 @@
-package com.makingdevs.automator
+package com.makingdevs.routes
 
 import org.apache.camel.builder.RouteBuilder
 
