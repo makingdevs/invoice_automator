@@ -1,5 +1,6 @@
 package com.makingdevs.routes
 
+import com.makingdevs.config.Application
 import org.apache.camel.builder.RouteBuilder
 
 /**
@@ -8,7 +9,7 @@ import org.apache.camel.builder.RouteBuilder
 class Route1 extends RouteBuilder {
 
   void configure(){
-    from("direct:processOrder")
-    .to("file:processed")
+    from(Application.instance.configuration.test.mail.url)
+    .to("mock:processed")
   }
 }
