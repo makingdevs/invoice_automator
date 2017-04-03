@@ -41,6 +41,6 @@ class InvoiceRouteTest extends CamelTestSupport {
 
   @Override
   protected RouteBuilder createRouteBuilder() {
-    new Route1()
+    new FilterRoute()
   }
 }
