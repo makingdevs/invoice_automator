@@ -21,6 +21,7 @@ class FilterRoute extends RouteBuilder {
       // zip file
       // pdf and xml
       false
-    }.to("mock:processed")
+      true
+    }.to("mock:start")
   }
 }
