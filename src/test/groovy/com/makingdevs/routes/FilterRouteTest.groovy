@@ -13,13 +13,23 @@ import org.junit.Test
  */
 class InvoiceRouteTest extends CamelTestSupport {
 
-  @EndpointInject(uri = "mock:processed")
-  protected MockEndpoint resultEndpoint;
+  @EndpointInject(uri = "mock:start")
+  protected MockEndpoint resultEndpoint
 
   @Produce(uri = "direct:mail")
-  protected ProducerTemplate template;
+  protected ProducerTemplate template
 
   @Test
+  void testSubjectContainsInvoice(){
+    Map<String,String> headers = ["Subject":"FACTURA ABRIL"]
+    resultEndpoint.expectedHeaderReceived("Subject", "FACTURA ABRIL")
+    resultEndpoint.expectedMessageCount(4)
+    template.sendBodyAndHeaders("Any body", headers)
+
+    resultEndpoint.assertIsSatisfied()
+
+  }
+
   void testSendMatchingMessage() throws Exception {
     String expectedBody = "<matched/>";
 
@@ -30,7 +40,6 @@ class InvoiceRouteTest extends CamelTestSupport {
     resultEndpoint.assertIsSatisfied();
   }
 
-  @Test
   void testSendNotMatchingMessage() throws Exception {
     resultEndpoint.expectedMessageCount(0);
 
