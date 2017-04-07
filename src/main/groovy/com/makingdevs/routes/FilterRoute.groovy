@@ -14,13 +14,17 @@ class FilterRoute extends RouteBuilder {
   void configure(){
 
     Predicate containsToMail = header("To").contains("fico@makingdevs.com")
+
     from(Application.instance.configuration.mail.url)
     .filter { Exchange e ->
+      e.in.headers.each { k, v ->
+        println "$k =========>  $v"
+      }
       // (factura) OR (facturas) OR (facturacion) OR (facturación) OR (finanzas) OR (fiscal)
       // cfdi
       // zip file
       // pdf and xml
       false
-    }.to("mock:processed")
+    }.to("direct:obtainInvoice")
   }
 }
