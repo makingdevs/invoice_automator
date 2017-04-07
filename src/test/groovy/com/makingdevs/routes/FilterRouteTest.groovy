@@ -21,7 +21,7 @@ class InvoiceRouteTest extends CamelTestSupport {
 
   private Map headers
 
-  @Parameterized.Parameters(name = "{index}: {0}")
+  @Parameterized.Parameters(name = "Msg with headers {0}")
   static Iterable data(){
     [
         ["Subject":"Envío de cfdi"],
@@ -29,7 +29,8 @@ class InvoiceRouteTest extends CamelTestSupport {
         ["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com"],
         ["Subject":"Fwd: Envio de Factura"],
         ["Subject":"CFDI: MAKING DEVS SC"],
-        ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"]
+        ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"],
+        ["Subject":"Factura Marzo Chihuahua230"]
     ]
   }
 
@@ -73,5 +74,6 @@ class InvoiceRouteTest extends CamelTestSupport {
     template.sendBodyAndHeaders("direct:mail", "Any body", headers)
     resultEndpoint.assertIsSatisfied()
   }
+
 
 }
