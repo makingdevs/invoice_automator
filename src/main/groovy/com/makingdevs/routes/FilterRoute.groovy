@@ -16,6 +16,7 @@ class FilterRoute extends RouteBuilder {
     Predicate containsToMail = header("To").contains("fico@makingdevs.com")
 
     from(Application.instance.configuration.mail.url)
+    .routeId("filterMessage")
     .filter { Exchange e ->
       e.in.headers.each { k, v ->
         println "$k =========>  $v"
