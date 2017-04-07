@@ -9,23 +9,31 @@ import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.test.junit4.CamelTestSupport
 import org.junit.After
 import org.junit.Before
-import org.junit.experimental.theories.DataPoints
-import org.junit.experimental.theories.Theories
-import org.junit.experimental.theories.Theory
+import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
 /**
  * Created by makingdevs on 3/27/17.
  */
-@RunWith(Theories)
+@RunWith(Parameterized)
 class InvoiceRouteTest extends CamelTestSupport {
 
-  public static @DataPoints List<Map<String,String>> candidates = [
-      ["Subject":"FACTURA ABRIL"],
-      ["Subject":"Fwd: Envio de Factura"],
-      ["Subject":"CFDI: MAKING DEVS SC"],
-      ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"]
-  ]
+  private Map headers
+
+  @Parameterized.Parameters(name = "{index}: {0}")
+  static Iterable data(){
+    [
+        ["Subject":"Envío de cfdi"],
+        ["Subject":"FACTURA ABRIL"],
+        ["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com"],
+        ["Subject":"Fwd: Envio de Factura"],
+        ["Subject":"CFDI: MAKING DEVS SC"],
+        ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"]
+    ]
+  }
+
+  InvoiceRouteTest(Map headers){ this.headers = headers }
 
   @EndpointInject(uri = "mock:directInvoice")
   protected MockEndpoint resultEndpoint
@@ -57,8 +65,8 @@ class InvoiceRouteTest extends CamelTestSupport {
   @Override
   boolean isUseAdviceWith() { true }
 
-  @Theory
-  void testSubjectContainsInvoice(Map headers){
+  @Test
+  void testSubjectContainsInvoice(){
     String value = headers.get("Subject")
     resultEndpoint.expectedHeaderReceived("Subject", value)
     resultEndpoint.expectedMessageCount(1)
