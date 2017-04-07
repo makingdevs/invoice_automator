@@ -18,13 +18,13 @@ class FilterRoute extends RouteBuilder {
 
   void configure(){
 
-    Predicate hasCFDISubject = PredicateBuilder.regex(header("Subject"), /.*[Cc]fdi|[Cc]FDI.*/)
-    Predicate hasInvoiceSubject = PredicateBuilder.regex(header("Subject"), /.*[fF]actura|[fF]ACTURA.*/)
+    Predicate hasCFDISubject = header("Subject").regex(/.*[Cc]fdi|[Cc]FDI.*/)
+    Predicate hasInvoiceSubject = header("Subject").regex(/.*[fF]actura|[fF]ACTURA.*/)
     Predicate isUberInvoice = header("From").contains("uberfacturas.com")
 
     from(Application.instance.configuration.mail.url)
     .routeId("filterMessage")
-    .filter(or(isUberInvoice, hasCFDISubject, hasInvoiceSubject, method(MailFilter, "hasAnInvoiceName") ))
+    .filter(or(isUberInvoice, hasCFDISubject, hasInvoiceSubject))
     .to("direct:obtainInvoice")
     //.filter { Exchange e ->
     //  e.in.headers.each { k, v ->
