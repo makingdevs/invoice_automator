@@ -8,15 +8,24 @@ import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.test.junit4.CamelTestSupport
 import org.junit.After
-import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.experimental.theories.DataPoints
+import org.junit.experimental.theories.Theories
+import org.junit.experimental.theories.Theory
+import org.junit.runner.RunWith
 
 /**
  * Created by makingdevs on 3/27/17.
  */
+@RunWith(Theories)
 class InvoiceRouteTest extends CamelTestSupport {
+
+  public static @DataPoints List<Map<String,String>> candidates = [
+      ["Subject":"FACTURA ABRIL"],
+      ["Subject":"Fwd: Envio de Factura"],
+      ["Subject":"CFDI: MAKING DEVS SC"],
+      ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"]
+  ]
 
   @EndpointInject(uri = "mock:directInvoice")
   protected MockEndpoint resultEndpoint
@@ -48,33 +57,13 @@ class InvoiceRouteTest extends CamelTestSupport {
   @Override
   boolean isUseAdviceWith() { true }
 
-  @Test
-  void testSubjectContainsInvoice(){
-    Map<String,String> headers = ["Subject":"FACTURA ABRIL"]
-    resultEndpoint.expectedHeaderReceived("Subject", "FACTURA ABRIL")
-    resultEndpoint.expectedMessageCount(4)
+  @Theory
+  void testSubjectContainsInvoice(Map headers){
+    String value = headers.get("Subject")
+    resultEndpoint.expectedHeaderReceived("Subject", value)
+    resultEndpoint.expectedMessageCount(1)
     template.sendBodyAndHeaders("direct:mail", "Any body", headers)
-
     resultEndpoint.assertIsSatisfied()
-
-  }
-
-  void testSendMatchingMessage() throws Exception {
-    String expectedBody = "<matched/>";
-
-    resultEndpoint.expectedBodiesReceived(expectedBody);
-
-    template.sendBodyAndHeader(expectedBody, "foo", "bar");
-
-    resultEndpoint.assertIsSatisfied();
-  }
-
-  void testSendNotMatchingMessage() throws Exception {
-    resultEndpoint.expectedMessageCount(0);
-
-    template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
-
-    resultEndpoint.assertIsSatisfied();
   }
 
 }
