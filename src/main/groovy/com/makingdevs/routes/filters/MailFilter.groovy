@@ -15,4 +15,10 @@ class MailFilter {
       fileName.contains(".pdf")
     }
   }
+
+  static boolean hasZipFile(@AttachmentObjects Map<String, Attachment> attachments){
+    attachments.any { String fileName, data ->
+      fileName.contains(".zip")
+    }
+  }
 }
