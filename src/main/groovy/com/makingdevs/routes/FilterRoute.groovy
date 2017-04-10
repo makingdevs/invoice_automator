@@ -2,10 +2,10 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.filters.MailFilter
-import org.apache.camel.Exchange
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
 
+import static org.apache.camel.builder.PredicateBuilder.and
 import static org.apache.camel.builder.PredicateBuilder.or
 
 /**
@@ -18,20 +18,16 @@ class FilterRoute extends RouteBuilder {
     Predicate hasCFDISubject = header("Subject").regex(/.*[Cc]fdi|[Cc]FDI.*/)
     Predicate hasInvoiceSubject = header("Subject").regex(/.*([f|F]+actura|[f|F]+ACTURA).*/)
     Predicate isUberInvoice = header("From").contains("uberfacturas.com")
-    Predicate attachments = method(MailFilter, "hasAnInvoiceName")
+    Predicate attachments = method(MailFilter, "hasFilesFromAnInvoice")
+    Predicate zipFile = method(MailFilter, "hasZipFile")
 
     from(Application.instance.configuration.mail.url)
     .routeId("filterMessage")
-    .filter(or(isUberInvoice, hasCFDISubject, hasInvoiceSubject, attachments))
-    .process { Exchange e ->
-      e.in.headers.each { k, v ->
-        println "$k =========>  $v"
-      }
-      // (factura) OR (facturas) OR (facturacion) OR (facturación) OR (finanzas) OR (fiscal)
-      // cfdi
-      // zip file
-      // pdf and xml
-      e
-    }
+    .choice()
+    .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments)).to("log:unzip")
+    .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile)).to("log:zipfile")
+    .when(isUberInvoice).to("log:uber")
+    .otherwise().to("log:unprocessable")
+    .end()
   }
 }
