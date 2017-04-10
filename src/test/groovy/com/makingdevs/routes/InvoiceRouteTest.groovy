@@ -75,5 +75,4 @@ class InvoiceRouteTest extends CamelTestSupport {
     resultEndpoint.assertIsSatisfied()
   }
 
-
 }
