@@ -19,25 +19,39 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized)
 class InvoiceRouteTest extends CamelTestSupport {
 
-  private Map headers
+  @Parameterized.Parameter(0)
+  public Map headers
 
-  @Parameterized.Parameters(name = "Msg with headers {0}")
-  static Iterable data(){
+  @Parameterized.Parameter(1)
+  public int processWithAttachments
+
+  @Parameterized.Parameter(2)
+  public int processZip
+
+  @Parameterized.Parameter(3)
+  public uberInvoice
+
+  @Parameterized.Parameters(name = "Msg with headers {0}, {1}")
+  static data(){
     [
-        ["Subject":"Envío de cfdi"],
-        ["Subject":"FACTURA ABRIL"],
-        ["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com"],
-        ["Subject":"Fwd: Envio de Factura"],
-        ["Subject":"CFDI: MAKING DEVS SC"],
-        ["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"],
-        ["Subject":"Factura Marzo Chihuahua230"]
-    ]
+      [["Subject":"Envío de cfdi"],0,0,0],
+      [["Subject":"FACTURA ABRIL"],0,0,0],
+      [["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com"],0,0,0],
+      [["Subject":"Fwd: Envio de Factura"],0,0,0],
+      [["Subject":"CFDI: MAKING DEVS SC"],0,0,0],
+      [["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"],0,0,0],
+      [["Subject":"Factura Marzo Chihuahua230"],0,0,0]
+    ]*.toArray()
   }
 
-  InvoiceRouteTest(Map headers){ this.headers = headers }
+  @EndpointInject(uri = "mock:processWithAttachments")
+  protected MockEndpoint attachmentsEndpoint
 
-  @EndpointInject(uri = "mock:directInvoice")
-  protected MockEndpoint resultEndpoint
+  @EndpointInject(uri = "mock:processZip")
+  protected MockEndpoint zipEndpoint
+
+  @EndpointInject(uri = "mock:uberInvoice")
+  protected MockEndpoint uberEndpoint
 
   @Produce(uri = "direct:mail")
   protected ProducerTemplate template
@@ -52,9 +66,15 @@ class InvoiceRouteTest extends CamelTestSupport {
     AdviceWithRouteBuilder mockDirect = new AdviceWithRouteBuilder() {
       @Override
       void configure() throws Exception {
-        interceptSendToEndpoint("direct:obtainInvoice")
+        interceptSendToEndpoint("direct:processWithAttachments")
             .skipSendToOriginalEndpoint()
-            .to("mock:directInvoice")
+            .to("mock:processWithAttachments")
+        interceptSendToEndpoint("direct:processZip")
+            .skipSendToOriginalEndpoint()
+            .to("mock:processZip")
+        interceptSendToEndpoint("direct:uberInvoice")
+            .skipSendToOriginalEndpoint()
+            .to("mock:uberInvoice")
       }
     }
     context.getRouteDefinition("filterMessage").adviceWith(context, mockDirect)
@@ -68,11 +88,13 @@ class InvoiceRouteTest extends CamelTestSupport {
 
   @Test
   void testSubjectContainsInvoice(){
-    String value = headers.get("Subject")
-    resultEndpoint.expectedHeaderReceived("Subject", value)
-    resultEndpoint.expectedMessageCount(1)
+    String value = headers.get('Subject')
+    attachmentsEndpoint.expectedHeaderReceived("Subject", value)
+    attachmentsEndpoint.expectedMessageCount(processWithAttachments)
+    zipEndpoint.expectedMessageCount(processZip)
+    uberEndpoint.expectedMessageCount(uberInvoice)
     template.sendBodyAndHeaders("direct:mail", "Any body", headers)
-    resultEndpoint.assertIsSatisfied()
+    attachmentsEndpoint.assertIsSatisfied()
   }
 
 }
