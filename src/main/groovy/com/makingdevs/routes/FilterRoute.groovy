@@ -22,12 +22,12 @@ class FilterRoute extends RouteBuilder {
     Predicate zipFile = method(MailFilter, "hasZipFile")
 
     from(Application.instance.configuration.mail.url)
-    .routeId("filterMessage")
-    .choice()
-    .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments)).to("log:unzip")
-    .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile)).to("log:zipfile")
-    .when(isUberInvoice).to("log:uber")
-    .otherwise().to("log:unprocessable")
-    .end()
+        .routeId("filterMessage")
+        .choice()
+          .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments)).to("direct:processWithAttachments")
+          .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile)).to("direct:processZip")
+          .when(isUberInvoice).to("direct:uberInvoice")
+          .otherwise().to("log:unprocessable")
+        .end()
   }
 }
