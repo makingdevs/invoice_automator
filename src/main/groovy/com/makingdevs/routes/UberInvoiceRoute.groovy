@@ -12,13 +12,14 @@ import org.apache.camel.Message
 class UberInvoiceRoute extends RouteBuilder {
 
   void configure() {
-    from("file:download")
+    from("direct:uberInvoice")
+    .routeId("uberInvoice")
     .process({ Exchange exchange ->
       Message msg = exchange.getIn()
       String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/).replace("https:","https4:")
       msg.setBody(newMessage)
     })
     .toD('${body}?maxRedirects=3')
-    .to("log:groovymail?showFiles=true")
+    .to("direct:processZip")
   }
 }
