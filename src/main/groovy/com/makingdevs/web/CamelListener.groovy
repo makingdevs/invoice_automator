@@ -1,7 +1,9 @@
 package com.makingdevs.web
 
 import com.makingdevs.routes.FilterRoute
+import com.makingdevs.routes.InvoiceRoute
 import com.makingdevs.routes.UberInvoiceRoute
+import com.makingdevs.routes.ZipRoute
 
 import javax.servlet.ServletContextListener
 import javax.servlet.ServletContextEvent
@@ -13,9 +15,10 @@ class CamelListener implements ServletContextListener {
   CamelContext camelContext = new DefaultCamelContext()
 
   void contextInitialized(ServletContextEvent sce) {
-    //camelContext.addRoutes(new InvoiceRoute())
     camelContext.addRoutes(new FilterRoute())
     camelContext.addRoutes(new UberInvoiceRoute())
+    camelContext.addRoutes(new ZipRoute())
+    camelContext.addRoutes(new InvoiceRoute())
     camelContext.start()
   }
 
