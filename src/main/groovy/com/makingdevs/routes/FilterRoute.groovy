@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.filters.MailFilter
+import org.apache.camel.Exchange
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
 
@@ -23,11 +24,16 @@ class FilterRoute extends RouteBuilder {
 
     from(Application.instance.configuration.mail.url)
         .routeId("filterMessage")
+        .setHeader("expeditionDate", method(MailFilter, "extractDateInvoice"))
         .choice()
-          .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments)).to("direct:processWithAttachments")
-          .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile)).to("direct:processZip")
-          .when(isUberInvoice).to("direct:uberInvoice")
-          .otherwise().to("log:unprocessable")
+          .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments))
+            .to("direct:processWithAttachments")
+          .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile))
+            .to("direct:processZip")
+          .when(isUberInvoice)
+            .to("direct:uberInvoice")
+          .otherwise()
+            .to("log:unprocessable")
         .end()
   }
 }
