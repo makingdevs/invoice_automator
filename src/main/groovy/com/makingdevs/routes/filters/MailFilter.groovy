@@ -21,4 +21,7 @@ class MailFilter {
       fileName.contains(".zip")
     }
   }
+  static Date extractDateInvoice(@Header("sentDate") String sentDate ) {
+    new Date()
+  }
 }
