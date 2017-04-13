@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.filters.MailFilter
+import org.apache.camel.Exchange
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.dataformat.zipfile.ZipSplitter
@@ -17,9 +18,9 @@ class ZipRoute extends RouteBuilder {
   void configure(){
 
     from("direct:processZip")
-        .routeId("processZip")
-        .split(new ZipSplitter()).streaming()
-        .to("file:facturas")
-        .to("log:unzipped?showAll=true&multiline=true&showFiles=true")
+      .routeId("processZip")
+      .split(new ZipSplitter())
+        .streaming()
+        .to("direct:processWithAttachments")
   }
 }
