@@ -22,7 +22,8 @@ class ProcessAttachments implements Processor {
     byte[] data =  exchange.context.typeConverter.convertTo(
         dh.inputStream.bytes.class, dh.inputStream) as byte[]
 
-    new FileOutputStream(filename).withStream {
+    String path = System.properties['java.io.tmpdir']
+    new FileOutputStream(path + filename).withStream {
       it.write(data)
     }
 
