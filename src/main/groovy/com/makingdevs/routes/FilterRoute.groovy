@@ -4,7 +4,6 @@ import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.UtilsForRoutes
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
-import org.apache.camel.component.mail.SplitAttachmentsExpression
 
 import static org.apache.camel.builder.PredicateBuilder.and
 import static org.apache.camel.builder.PredicateBuilder.or

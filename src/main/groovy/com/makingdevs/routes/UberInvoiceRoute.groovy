@@ -2,8 +2,8 @@ package com.makingdevs.routes
 
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
-import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.Message
+import org.apache.camel.builder.RouteBuilder
 
 /**
  * Created by makingdevs on 3/22/17.

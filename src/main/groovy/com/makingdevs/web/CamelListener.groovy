@@ -4,11 +4,11 @@ import com.makingdevs.routes.FilterRoute
 import com.makingdevs.routes.InvoiceRoute
 import com.makingdevs.routes.UberInvoiceRoute
 import com.makingdevs.routes.ZipRoute
-
-import javax.servlet.ServletContextListener
-import javax.servlet.ServletContextEvent
 import org.apache.camel.CamelContext
 import org.apache.camel.impl.DefaultCamelContext
+
+import javax.servlet.ServletContextEvent
+import javax.servlet.ServletContextListener
 
 class CamelListener implements ServletContextListener {
 
