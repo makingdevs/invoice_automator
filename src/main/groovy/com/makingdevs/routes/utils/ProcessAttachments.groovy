@@ -22,11 +22,6 @@ class ProcessAttachments implements Processor {
     byte[] data =  exchange.context.typeConverter.convertTo(
         dh.inputStream.bytes.class, dh.inputStream) as byte[]
 
-    String path = System.properties['java.io.tmpdir']
-    new FileOutputStream(path + filename).withStream {
-      it.write(data)
-    }
-
     exchange.out.setBody(data, data.class)
     Map headers = exchange.in.headers
     headers.put("CamelFileName", filename) // FILENAME!!!!
