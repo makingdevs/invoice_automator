@@ -4,6 +4,7 @@ import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.UtilsForRoutes
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
+import org.apache.camel.component.mail.SplitAttachmentsExpression
 
 import static org.apache.camel.builder.PredicateBuilder.and
 import static org.apache.camel.builder.PredicateBuilder.or
@@ -29,7 +30,7 @@ class FilterRoute extends RouteBuilder {
           .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments))
             .to("direct:processWithAttachments")
           .when(and(or(hasCFDISubject,hasInvoiceSubject), zipFile))
-            .to("direct:processZip")
+            .to("direct:attachmentsInZip")
           .when(isUberInvoice)
             .to("direct:uberInvoice")
           .otherwise()
