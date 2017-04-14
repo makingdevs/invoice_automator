@@ -26,13 +26,19 @@ class UtilsForRoutes {
   static String extractMonthInvoice(@Headers Map headers) {
     Locale.setDefault(Locale.US)
     String pattern = "EEE, d MMM yyyy HH:mm:ss Z"
-    Integer indexMonth = new Date().parse(pattern, headers["Date"] as String)[Calendar.MONTH]
+    String textDate = headers["Date"]
+    if(textDate ==~ /\d{2} .{3} \d{4} \d{2}:\d{2}:\d{2} -\d{4}/)
+      pattern = "d MMM yyyy HH:mm:ss Z"
+    Integer indexMonth = new Date().parse(pattern, textDate as String)[Calendar.MONTH]
     months.get(indexMonth)
   }
 
   static Integer extractYearInvoice(@Headers Map headers) {
     Locale.setDefault(Locale.US)
     String pattern = "EEE, d MMM yyyy HH:mm:ss Z"
-    new Date().parse(pattern, headers["Date"] as String)[Calendar.YEAR]
+    String textDate = headers["Date"]
+    if(textDate ==~ /\d{2} .{3} \d{4} \d{2}:\d{2}:\d{2} -\d{4}/)
+      pattern = "d MMM yyyy HH:mm:ss Z"
+    new Date().parse(pattern, textDate as String)[Calendar.YEAR]
   }
 }
