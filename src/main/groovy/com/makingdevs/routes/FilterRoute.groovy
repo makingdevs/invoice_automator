@@ -24,7 +24,8 @@ class FilterRoute extends RouteBuilder {
 
     from(Application.instance.configuration.mail.url)
         .routeId("filterMessage")
-        .setHeader("expeditionDate", method(MailFilter, "extractDateInvoice"))
+        .setHeader("expeditionMonth", method(MailFilter, "extractMonthInvoice"))
+        .setHeader("expeditionYear", method(MailFilter, "extractYearInvoice"))
         .choice()
           .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments))
             .to("direct:processWithAttachments")
