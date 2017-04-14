@@ -1,6 +1,7 @@
 package com.makingdevs.routes
 
 import com.makingdevs.routes.utils.ProcessAttachments
+import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.dataformat.zipfile.ZipSplitter
 
@@ -10,6 +11,8 @@ import org.apache.camel.dataformat.zipfile.ZipSplitter
 class ZipRoute extends RouteBuilder {
 
   void configure(){
+
+    errorHandler(loggingErrorHandler("com.makingdevs.zip").level(LoggingLevel.ERROR))
 
     from("direct:attachmentsInZip")
     .process(new ProcessAttachments())

@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.UtilsForRoutes
+import org.apache.camel.LoggingLevel
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
 
@@ -20,6 +21,8 @@ class FilterRoute extends RouteBuilder {
     Predicate isUberInvoice = header("From").contains("uberfacturas.com")
     Predicate attachments = method(UtilsForRoutes, "hasFilesFromAnInvoice")
     Predicate zipFile = method(UtilsForRoutes, "hasZipFile")
+
+    errorHandler(loggingErrorHandler("com.makingdevs.filter").level(LoggingLevel.ERROR))
 
     from(Application.instance.configuration.mail.url)
         .routeId("filterMessage")

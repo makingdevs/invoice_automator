@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
+import org.apache.camel.LoggingLevel
 import org.apache.camel.Message
 import org.apache.camel.builder.RouteBuilder
 
@@ -12,6 +13,9 @@ import org.apache.camel.builder.RouteBuilder
 class UberInvoiceRoute extends RouteBuilder {
 
   void configure() {
+
+    errorHandler(loggingErrorHandler("com.makingdevs.uber").level(LoggingLevel.ERROR))
+
     from("direct:uberInvoice")
     .routeId("uberInvoice")
     .process({ Exchange exchange ->
