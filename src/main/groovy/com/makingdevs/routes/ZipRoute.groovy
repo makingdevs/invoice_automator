@@ -1,5 +1,6 @@
 package com.makingdevs.routes
 
+import com.makingdevs.routes.utils.ProcessAttachments
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.dataformat.zipfile.ZipSplitter
 
@@ -11,12 +12,13 @@ class ZipRoute extends RouteBuilder {
   void configure(){
 
     from("direct:attachmentsInZip")
+    .process(new ProcessAttachments())
     .to("direct:processZip")
 
     from("direct:processZip")
       .routeId("processZip")
       .split(new ZipSplitter())
         .streaming()
-        .to("direct:processWithAttachments")
+        .to("direct:storeInLocal")
   }
 }
