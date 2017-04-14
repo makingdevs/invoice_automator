@@ -12,7 +12,7 @@ class InvoiceRoute extends RouteBuilder {
 
   void configure() {
     from("direct:processWithAttachments")
-    .to("log:processWithAttachments?showHeaders=true")
+    .recipientList(simple('file:facturas/${header.expeditionYear}/${header.expeditionMonth}/'))
   }
 
 }
