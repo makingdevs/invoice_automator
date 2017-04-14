@@ -1,14 +1,12 @@
-package com.makingdevs.routes.filters
+package com.makingdevs.routes.utils
 
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import org.apache.camel.Attachment
 import org.apache.camel.AttachmentObjects
-import org.apache.camel.Header
 import org.apache.camel.Headers
 
 @CompileStatic
-class MailFilter {
+class UtilsForRoutes {
 
   static List<String> months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 

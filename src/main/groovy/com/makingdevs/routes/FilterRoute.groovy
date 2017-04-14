@@ -1,8 +1,7 @@
 package com.makingdevs.routes
 
 import com.makingdevs.config.Application
-import com.makingdevs.routes.filters.MailFilter
-import org.apache.camel.Exchange
+import com.makingdevs.routes.utils.UtilsForRoutes
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
 
@@ -19,13 +18,13 @@ class FilterRoute extends RouteBuilder {
     Predicate hasCFDISubject = header("Subject").regex(/.*[Cc]fdi|[Cc]FDI.*/)
     Predicate hasInvoiceSubject = header("Subject").regex(/.*([f|F]+actura|[f|F]+ACTURA).*/)
     Predicate isUberInvoice = header("From").contains("uberfacturas.com")
-    Predicate attachments = method(MailFilter, "hasFilesFromAnInvoice")
-    Predicate zipFile = method(MailFilter, "hasZipFile")
+    Predicate attachments = method(UtilsForRoutes, "hasFilesFromAnInvoice")
+    Predicate zipFile = method(UtilsForRoutes, "hasZipFile")
 
     from(Application.instance.configuration.mail.url)
         .routeId("filterMessage")
-        .setHeader("expeditionMonth", method(MailFilter, "extractMonthInvoice"))
-        .setHeader("expeditionYear", method(MailFilter, "extractYearInvoice"))
+        .setHeader("expeditionMonth", method(UtilsForRoutes, "extractMonthInvoice"))
+        .setHeader("expeditionYear", method(UtilsForRoutes, "extractYearInvoice"))
         .choice()
           .when(and(or(hasCFDISubject,hasInvoiceSubject), attachments))
             .to("direct:processWithAttachments")
