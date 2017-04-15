@@ -17,12 +17,12 @@ class DropboxRoute extends RouteBuilder {
 
   @Override
   void configure() throws Exception {
-    from("file:${localPath}?delay=5000&recursive=true")
+    from("file:${localPath}?recursive=true")
     .to("""\
           dropbox://put?\
           accessToken=${dropboxAccessToken}&\
           clientIdentifier=${dropboxClientId}&\
-          localPath=${localPath}/\${header.fileName}&\
+          localPath=${localPath}/&\
           remotePath=/facturacion&\
           uploadMode=force""".replace(" ","").trim())
 
