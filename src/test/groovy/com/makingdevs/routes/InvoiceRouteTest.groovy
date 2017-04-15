@@ -34,13 +34,13 @@ class InvoiceRouteTest extends CamelTestSupport {
   @Parameterized.Parameters(name = "Msg with headers {0}, {1}")
   static data(){
     [
-      [["Subject":"Envío de cfdi"],0,0,0],
-      [["Subject":"FACTURA ABRIL"],0,0,0],
-      [["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com"],0,0,0],
-      [["Subject":"Fwd: Envio de Factura"],0,0,0],
-      [["Subject":"CFDI: MAKING DEVS SC"],0,0,0],
-      [["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113"],0,0,0],
-      [["Subject":"Factura Marzo Chihuahua230"],0,0,0]
+      [["Subject":"Envío de cfdi", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"FACTURA ABRIL", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"CFDI: MAKING DEVS SC", "From":"cfdi@uberfacturas.com", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"Fwd: Envio de Factura", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"CFDI: MAKING DEVS SC", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"FACTURA ELECTRÓNICA JUGUETRON DJ 122113", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0],
+      [["Subject":"Factura Marzo Chihuahua230", "Date":"Wed, 4 Jul 2001 12:08:56 -0700"],0,0,0]
     ]*.toArray()
   }
 
