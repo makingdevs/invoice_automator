@@ -12,9 +12,9 @@ class InvoiceRoute extends RouteBuilder {
 
   ConfigObject configuration = Application.instance.configuration
 
-  String fileEndpoint = """\
-      file:${configuration.get("file")["localPath"]}/\${header.expeditionYear}/\${header.expeditionMonth}/
-    """.trim()
+  String localPath = configuration.get("file")["localPath"]
+
+  String fileEndpoint = "file:${localPath}/\${header.expeditionYear}/\${header.expeditionMonth}/"
 
   void configure() {
 
@@ -27,7 +27,6 @@ class InvoiceRoute extends RouteBuilder {
 
     from("direct:storeInLocal")
         .recipientList(simple(fileEndpoint))
-        .to("log:finalFile?showBody=false")
   }
 
 }
