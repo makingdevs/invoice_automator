@@ -7,6 +7,12 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 String env = System.getenv("ENVIRONMENT") ?: "development"
 
+levelsByEnvironment = [
+    "development" : DEBUG,
+    "test" : WARN,
+    "production" : ERROR,
+]
+
 appender("FILE", FileAppender) {
   file = "invoice_automator.log"
   append = true
@@ -15,9 +21,4 @@ appender("FILE", FileAppender) {
   }
 }
 
-level = DEBUG
-
-if(env == "production" )
-  level = ERROR
-
-root(level, ["FILE"])
+root(levelsByEnvironment[env], ["FILE"])
