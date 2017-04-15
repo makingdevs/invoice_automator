@@ -2,7 +2,6 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import org.apache.camel.builder.RouteBuilder
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 
 /**
  * Created by neodevelop on 14/04/17.

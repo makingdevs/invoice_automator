@@ -20,7 +20,7 @@ class CamelListener implements ServletContextListener {
     camelContext.addRoutes(new UberInvoiceRoute())
     camelContext.addRoutes(new ZipRoute())
     camelContext.addRoutes(new InvoiceRoute())
-    camelContext.addRoutes(new DropboxRoute())
+    //camelContext.addRoutes(new DropboxRoute())
     camelContext.start()
   }
 
