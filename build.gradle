@@ -1,3 +1,4 @@
+apply plugin: 'application'
 apply plugin: 'groovy'
 apply plugin: 'war'
 apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
@@ -29,5 +30,8 @@ dependencies {
 	compile "org.apache.camel:camel-dropbox:${camelVersion}"
 	compile 'org.codehaus.groovy:groovy-all:2.4.10'
 	compile "ch.qos.logback:logback-classic:1.2.1"
+	compile 'io.undertow:undertow-servlet:1.4.12.Final'
 	testCompile "org.apache.camel:camel-test:${camelVersion}"
 }
+
+mainClassName = "com.makingdevs.App"
