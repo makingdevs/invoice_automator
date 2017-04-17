@@ -1,6 +1,6 @@
 package com.makingdevs.web
 
-import com.makingdevs.routes.DropboxRoute
+
 import com.makingdevs.routes.FilterRoute
 import com.makingdevs.routes.InvoiceRoute
 import com.makingdevs.routes.UberInvoiceRoute
@@ -20,7 +20,6 @@ class CamelListener implements ServletContextListener {
     camelContext.addRoutes(new UberInvoiceRoute())
     camelContext.addRoutes(new ZipRoute())
     camelContext.addRoutes(new InvoiceRoute())
-    //camelContext.addRoutes(new DropboxRoute())
     camelContext.start()
   }
 
