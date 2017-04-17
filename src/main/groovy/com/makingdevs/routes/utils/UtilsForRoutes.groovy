@@ -30,7 +30,7 @@ class UtilsForRoutes {
     if(textDate ==~ /\d{2} .{3} \d{4} \d{2}:\d{2}:\d{2} -\d{4}/)
       pattern = "d MMM yyyy HH:mm:ss Z"
     Integer indexMonth = new Date().parse(pattern, textDate as String)[Calendar.MONTH]
-    months.get(indexMonth)
+    "${indexMonth + 1}_${months.get(indexMonth)}"
   }
 
   static Integer extractYearInvoice(@Headers Map headers) {
@@ -41,4 +41,5 @@ class UtilsForRoutes {
       pattern = "d MMM yyyy HH:mm:ss Z"
     new Date().parse(pattern, textDate as String)[Calendar.YEAR]
   }
+
 }
