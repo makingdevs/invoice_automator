@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.ProcessAttachments
+import com.makingdevs.routes.utils.UtilsForRoutes
 import groovy.transform.CompileStatic
 import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
@@ -13,11 +14,7 @@ class InvoiceRoute extends RouteBuilder {
 
   ConfigObject configuration = Application.instance.configuration
 
-  String s3Endpoint = """\
-    aws-s3://${configuration.get('aws')['bucketName']}\
-    ?accessKey=${configuration.get('aws')['accessKey']}\
-    &secretKey=RAW(${configuration.get('aws')['secretKey']})\
-  """.trim()
+  String s3Endpoint = "aws-s3://${configuration.get('aws')['bucketName']}?accessKey=${configuration.get('aws')['accessKey']}&secretKey=RAW(${configuration.get('aws')['secretKey']})"
 
   void configure() {
 
@@ -29,10 +26,10 @@ class InvoiceRoute extends RouteBuilder {
         .to("direct:storeInLocal")
 
     from("direct:storeInLocal")
-        .setHeader(S3Constants.CONTENT_LENGTH, simple('${in.header.CamelFileLength}'))
+    //.setHeader(S3Constants.CONTENT_LENGTH, simple("file:size"))
+    // TODO: Calculate the body size
         .setHeader(S3Constants.KEY, simple('${header.expeditionYear}/${header.expeditionMonth}/${in.header.CamelFileName}'))
         .to(s3Endpoint)
-        //.recipientList(simple(fileEndpoint))
   }
 
 }
