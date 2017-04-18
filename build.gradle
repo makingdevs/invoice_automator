@@ -1,6 +1,8 @@
 apply plugin: 'groovy'
 apply plugin: 'war'
 apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+apply plugin: 'org.hidetake.ssh'
+apply plugin: 'project-report'
 
 buildscript {
 	repositories {
@@ -9,6 +11,7 @@ buildscript {
 
 	dependencies {
 		classpath 'org.akhikhl.gretty:gretty:+'
+		classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
 	}
 }
 
