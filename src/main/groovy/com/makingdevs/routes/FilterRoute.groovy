@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.UtilsForRoutes
+import org.apache.camel.Exchange
 import org.apache.camel.LoggingLevel
 import org.apache.camel.Predicate
 import org.apache.camel.builder.RouteBuilder
@@ -13,6 +14,8 @@ import static org.apache.camel.builder.PredicateBuilder.or
  * Created by makingdevs on 3/22/17.
  */
 class FilterRoute extends RouteBuilder {
+
+  ConfigObject configuration = Application.instance.configuration
 
   void configure(){
 
@@ -36,7 +39,16 @@ class FilterRoute extends RouteBuilder {
           .when(isUberInvoice)
             .to("direct:uberInvoice")
           .otherwise()
+            .process { Exchange e ->
+              String message = """\
+                        No se puede procesar factura recibida de ${e.in.headers['From']}.
+                        Asunto: ${e.in.headers['Subject']}
+                      """
+              e.out.setBody(message, String)
+              e.out.setHeaders(e.in.headers)
+            }
             .to("log:unprocessable")
+            .to("telegram:bots/${configuration.get('telegram')['token']}?chatId=${configuration.get('telegram')['chatId']}")
         .end()
   }
 }
