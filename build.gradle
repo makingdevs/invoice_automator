@@ -53,7 +53,7 @@ task deploy {
 		ssh.run {
 			session(remotes.webServer) {
         execute '/sbin/service tomcatAutomator stop'
-				put from: 'build/libs/invoice_automator.war', into: '/home/ec2-user/tomcat-production/webapps'
+				put from: "${project.projectDir.path}/build/libs/invoice_automator.war", into: '/home/ec2-user/tomcat-production/webapps'
 				execute '/sbin/service tomcatAutomator start'
 			}
 		}
