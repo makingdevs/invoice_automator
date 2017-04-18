@@ -6,6 +6,7 @@ import static ch.qos.logback.classic.Level.ERROR
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 String env = System.getenv("ENVIRONMENT") ?: "development"
+String container = System.getenv("TOMCAT_HOME") ?: "."
 
 levelsByEnvironment = [
     "development" : DEBUG,
@@ -14,7 +15,7 @@ levelsByEnvironment = [
 ]
 
 appender("FILE", FileAppender) {
-  file = "invoice_automator.log"
+  file = "${container}/invoice_automator.log"
   append = true
   encoder(PatternLayoutEncoder) {
     pattern = "%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n"
