@@ -33,6 +33,7 @@ dependencies {
     exclude group: 'com.amazonaws'
   }
   compile 'com.amazonaws:aws-java-sdk-s3:1.11.18'
+	compile 'com.amazonaws:aws-java-sdk-cloudfront:1.11.18'
 	compile "org.apache.camel:camel-telegram:${camelVersion}"
 	compile 'org.codehaus.groovy:groovy-all:2.4.10'
 	compile "ch.qos.logback:logback-classic:1.2.1"
