@@ -12,9 +12,9 @@ class UtilsForRoutes {
 
   static boolean hasFilesFromAnInvoice(@AttachmentObjects Map<String, Attachment> attachments){
     attachments.any { String fileName, data ->
-      fileName.contains(".xml")
+      fileName.toLowerCase().contains(".xml")
     } && attachments.any { String fileName, data ->
-      fileName.contains(".pdf")
+      fileName.toLowerCase().contains(".pdf")
     }
   }
 
