@@ -37,13 +37,15 @@ class InvoiceRoute extends RouteBuilder {
           e.out.setHeaders(e.in.headers)
         }
         .aggregate(header("Message-ID"), { Exchange oldExchange, Exchange newExchange ->
-          if (!oldExchange) return newExchange
+          if (!oldExchange){
+            return newExchange
+          }
 
           String oldBody = oldExchange.in.getBody(String)
           String newBody = newExchange.in.getBody(String)
           oldExchange.in.setBody(oldBody + "\n" + newBody)
           oldExchange
-        } as AggregationStrategy).completionSize(header("attachmentsSize"))
+        } as AggregationStrategy).completionTimeout(3000L) // TODO: Arbitrary, deep learn!
         .process { Exchange ex ->
           String message = """\
                                 Archivos: ${ex.in.body}

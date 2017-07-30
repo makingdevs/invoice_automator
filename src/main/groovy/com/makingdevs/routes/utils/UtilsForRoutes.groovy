@@ -42,8 +42,4 @@ class UtilsForRoutes {
     new Date().parse(pattern, textDate as String)[Calendar.YEAR]
   }
 
-  static int attachmentsSize(@AttachmentObjects Map<String, Attachment> attachments){
-    attachments.size()
-  }
-
 }
