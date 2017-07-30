@@ -38,6 +38,8 @@ class FilterRoute extends RouteBuilder {
             .to("direct:attachmentsInZip")
           .when(isUberInvoice)
             .to("direct:uberInvoice")
+          .when(attachments)
+            .to("direct:processWithAttachments")
           .otherwise()
             .process { Exchange e ->
               String message = """\
