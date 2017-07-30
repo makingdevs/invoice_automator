@@ -2,13 +2,13 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.ProcessAttachments
-import com.makingdevs.routes.utils.UtilsForRoutes
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
 import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.aws.s3.S3Constants
 import org.apache.camel.component.mail.SplitAttachmentsExpression
+import org.apache.camel.processor.aggregate.AggregationStrategy
 
 @CompileStatic
 class InvoiceRoute extends RouteBuilder {
@@ -32,15 +32,26 @@ class InvoiceRoute extends RouteBuilder {
         .setHeader(S3Constants.KEY, simple('${header.expeditionYear}/${header.expeditionMonth}/${in.header.CamelFileName}'))
         .to(s3Endpoint)
         .process { Exchange e ->
-          String message = """\
-                            Archivo procesado: ${e.in.headers['CamelAwsS3Key']}.\
-                            \nAsunto: ${e.in.headers['Subject']}\
-                            \nRemitente: ${e.in.headers['Reply-To'] ?: 'Sin información'}\
-                          """.trim()
+          String message = e.in.headers['CamelAwsS3Key']
           e.out.setBody(message, String)
           e.out.setHeaders(e.in.headers)
         }
-        // TODO: Use an aggregator to send one message
+        .aggregate(header("Message-ID"), { Exchange oldExchange, Exchange newExchange ->
+          if (!oldExchange) return newExchange
+
+          String oldBody = oldExchange.in.getBody(String)
+          String newBody = newExchange.in.getBody(String)
+          oldExchange.in.setBody(oldBody + "\n" + newBody)
+          oldExchange
+        } as AggregationStrategy).completionSize(header("attachmentsSize"))
+        .process { Exchange ex ->
+          String message = """\
+                                Archivos: ${ex.in.body}
+                                \nAsunto: ${ex.in.headers['Subject']}\
+                                \nRemitente: ${ex.in.headers['Reply-To'] ?: 'Sin información'}\
+                              """.trim()
+          ex.in.setBody(message)
+        }
         .to("telegram:bots/${configuration.get('telegram')['token']}?chatId=${configuration.get('telegram')['chatId']}")
   }
 
