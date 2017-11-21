@@ -6,6 +6,8 @@ import org.apache.camel.LoggingLevel
 import org.apache.camel.Message
 import org.apache.camel.builder.RouteBuilder
 
+import java.util.regex.Matcher
+
 /**
  * Created by makingdevs on 3/22/17.
  */
@@ -19,11 +21,13 @@ class UberInvoiceRoute extends RouteBuilder {
     from("direct:uberInvoice")
     .routeId("uberInvoice")
     .process({ Exchange exchange ->
-      Message msg = exchange.getIn()
-      String newMessage = msg.getBody(String).find(/https:\/\/cfdi.uberfacturas.com\/downloadZIP[^"]*/).replace("https:","https4:")
-      msg.setBody(newMessage)
+      String msg = exchange.in.getBody(String)
+      String regex = /\"{1}http:\/\/email.uber.com\/.*"{1}/
+      Matcher matcher = msg =~ regex
+      exchange.out.setBody(matcher[0..1])
     })
-    .toD('${body}?maxRedirects=3')
-    .to("direct:processZip")
+    .to("log:uber")
+    //.toD('${body}?maxRedirects=3')
+    //.to("direct:processZip")
   }
 }
