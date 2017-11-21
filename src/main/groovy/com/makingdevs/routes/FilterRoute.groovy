@@ -21,7 +21,7 @@ class FilterRoute extends RouteBuilder {
 
     Predicate hasCFDISubject = header("Subject").regex(/.*[Cc]fdi|[Cc]FDI.*/)
     Predicate hasInvoiceSubject = header("Subject").regex(/.*([f|F]+actura|[f|F]+ACTURA).*/)
-    Predicate isUberInvoice = header("From").contains("uberfacturas.com")
+    Predicate isUberInvoice = header("From").contains("uber.com")
     Predicate attachments = method(UtilsForRoutes, "hasFilesFromAnInvoice")
     Predicate zipFile = method(UtilsForRoutes, "hasZipFile")
 
