@@ -22,12 +22,21 @@ class UberInvoiceRoute extends RouteBuilder {
     .routeId("uberInvoice")
     .process({ Exchange exchange ->
       String msg = exchange.in.getBody(String)
-      String regex = /\"{1}http:\/\/email.uber.com\/.*"{1}/
+      String regex = /{1}http:\/\/email.uber.com\/.*{1}(?=\>)/
       Matcher matcher = msg =~ regex
-      exchange.out.setBody(matcher[0..1])
+      if(matcher.size() > 0){
+        exchange.out.setBody(matcher[0..1])
+      }else{
+        println "there are not links to download files"
+      }
+    }).split(body())
+    .process({ Exchange exchange ->
+      String link = exchange.in.getBody(String)
+      link = link.replace("http:", "https:")
+      exchange.out.setBody(link)
+      println "<<<<<<<<<<<<<<<"
     })
-    .to("log:uber")
-    //.toD('${body}?maxRedirects=3')
+    .toD('${body}') 
     //.to("direct:processZip")
   }
 }
