@@ -43,6 +43,13 @@ class InvoiceRoute extends RouteBuilder {
 
           String oldBody = oldExchange.in.getBody(String)
           String newBody = newExchange.in.getBody(String)
+          if(newBody.endsWith(".xml")){
+            oldExchange.in.headers.put("emitter", newExchange.in.headers.get("emitter"))
+            oldExchange.in.headers.put("expeditionDate", newExchange.in.headers.get("expeditionDate"))
+            oldExchange.in.headers.put("concepts", newExchange.in.headers.get("concepts"))
+            oldExchange.in.headers.put("amount", newExchange.in.headers.get("amount"))
+            oldExchange.in.headers.put("taxes", newExchange.in.headers.get("taxes"))
+          }
           oldExchange.in.setBody(oldBody + "\n" + newBody)
           oldExchange
         } as AggregationStrategy).completionTimeout(3000L) // TODO: Arbitrary, deep learn!
@@ -51,6 +58,11 @@ class InvoiceRoute extends RouteBuilder {
                                 Archivos: ${ex.in.body}
                                 \nAsunto: ${ex.in.headers['Subject']}\
                                 \nRemitente: ${ex.in.headers['Reply-To'] ?: 'Sin información'}\
+                                \n\nEmisor: ${ex.in.headers['emitter']}\
+                                \n\nFecha expedición: ${ex.in.headers['expeditionDate']}\
+                                \nConceptos: \n${ex.in.headers['concepts']}\
+                                \n\nImporte: ${ex.in.headers['amount']}\
+                                \nImpuesto: ${ex.in.headers['taxes']}\
                               """.trim()
           ex.in.setBody(message)
         }
