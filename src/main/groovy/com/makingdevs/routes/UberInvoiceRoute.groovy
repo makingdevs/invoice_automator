@@ -5,7 +5,7 @@ import org.apache.camel.Exchange
 import org.apache.camel.LoggingLevel
 import org.apache.camel.Message
 import org.apache.camel.builder.RouteBuilder
-
+import java.util.ArrayList
 import java.util.regex.Matcher
 
 /**
@@ -25,6 +25,7 @@ class UberInvoiceRoute extends RouteBuilder {
       String regex = /{1}http:\/\/email.uber.com\/.*{1}(?=\>)/
       Matcher matcher = msg =~ regex
       if(matcher.size() > 0){
+        exchange.out.setHeaders(exchange.in.headers)
         exchange.out.setBody(matcher[0..1])
       }else{
         println "there are not links to download files"
@@ -32,11 +33,26 @@ class UberInvoiceRoute extends RouteBuilder {
     }).split(body())
     .process({ Exchange exchange ->
       String link = exchange.in.getBody(String)
-      link = link.replace("http:", "https:")
+      link = link.replace("http:", "http4:")
+      exchange.out.setHeaders(exchange.in.headers)
       exchange.out.setBody(link)
-      println "<<<<<<<<<<<<<<<"
     })
     .toD('${body}') 
+    .process({ Exchange exchange ->
+      byte[] data = exchange.in.getBody(byte[])
+      exchange.out.setBody(data, data.class)
+      
+      Map headers = exchange.in.headers
+      String regex = /"(.*?)"/
+      Matcher matcher = headers['Content-Disposition'] =~ regex
+      if(matcher.size() > 0){ 
+        headers.put("CamelFileName", ((ArrayList)matcher[0]).get(1)) // FILENAME!!!!
+        exchange.out.setHeaders(headers)
+      }else{
+        println "no match"
+      }
+    })
+    .to("direct:storeInLocal")
     //.to("direct:processZip")
   }
 }
