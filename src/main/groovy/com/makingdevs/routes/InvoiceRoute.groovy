@@ -10,6 +10,7 @@ import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.aws.s3.S3Constants
 import org.apache.camel.component.mail.SplitAttachmentsExpression
 import org.apache.camel.processor.aggregate.AggregationStrategy
+import com.makingdevs.routes.utils.UtilsForRoutes
 
 @CompileStatic
 class InvoiceRoute extends RouteBuilder {
@@ -26,6 +27,23 @@ class InvoiceRoute extends RouteBuilder {
         .split(new SplitAttachmentsExpression())
         .process(new ProcessAttachments())
         .process(new ProceessInvoiceDetail())
+        .setHeader("expeditionMonth", method(UtilsForRoutes, "extractExpeditionDateMonth"))
+        .aggregate(header("Message-ID"), { Exchange oldExchange, Exchange newExchange ->
+          println newExchange.in.headers
+          if (!oldExchange){
+            return newExchange
+          }
+          if(newExchange.in.headers["expeditionMonth"]){
+            oldExchange.in.headers["expeditionMonth"] = newExchange.in.headers["expeditionMonth"]
+          }
+          println oldExchange.in.headers["expeditionMonth"]
+          println oldExchange.in.body.class 
+          println newExchange.in.body.class
+          oldExchange.in.setBody([oldExchange.in.body, newExchange.in.body])
+          oldExchange
+
+        } as AggregationStrategy).completionTimeout(3000L)
+        .split(body())
         .to("direct:storeInLocal")
 
     from("direct:storeInLocal")
