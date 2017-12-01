@@ -2,6 +2,7 @@ package com.makingdevs.routes
 
 import com.makingdevs.config.Application
 import com.makingdevs.routes.utils.ProcessAttachments
+import com.makingdevs.routes.utils.ProceessInvoiceDetail
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
 import org.apache.camel.LoggingLevel
@@ -24,6 +25,7 @@ class InvoiceRoute extends RouteBuilder {
     from("direct:processWithAttachments")
         .split(new SplitAttachmentsExpression())
         .process(new ProcessAttachments())
+        .process(new ProceessInvoiceDetail())
         .to("direct:storeInLocal")
 
     from("direct:storeInLocal")

@@ -27,39 +27,7 @@ class ProcessAttachments implements Processor {
     exchange.out.setBody(data, data.class)
     Map headers = exchange.in.headers
     headers.put("CamelFileName", filename) // FILENAME!!!!
-    if(filename.endsWith(".xml")){
-        headers.putAll(pullDetail(data))
-    }
     exchange.out.setHeaders(headers)
 
-  }
-
-  private Map pullDetail(byte[] data){
-      Map detail = new  HashMap()
-      InputStream myInputStream = new ByteArrayInputStream(data)
-      BufferedReader inputReader = new BufferedReader(new InputStreamReader(myInputStream))
-      StringBuilder sb = new StringBuilder()
-      String inline = ""
-      while ((inline = inputReader.readLine()) != null) {
-        sb.append(inline)
-      }
-      String xml = sb.toString().toLowerCase()
-      def xmlParsed = new XmlParser().parseText(xml)
-      def cfdiNs = new groovy.xml.Namespace("http://www.sat.gob.mx/cfd/3", "cfdi")
-      
-      def emitter = xmlParsed[cfdiNs.emisor].@nombre
-      detail.put("emitter", emitter[0])
-      
-      detail.put("expeditionDate", xmlParsed.@fecha)
-
-      String concepts = ""
-      xmlParsed[cfdiNs.conceptos][cfdiNs.concepto].each { concepts += it.@descripcion +", "}
-      detail.put("concepts", concepts)
-
-      detail.put("amount", xmlParsed.@total)
-
-      def taxes = xmlParsed[cfdiNs.impuestos][cfdiNs.traslados][cfdiNs.traslado].@importe
-      detail.put("taxes", taxes[0])
-      detail
   }
 }
