@@ -2,15 +2,13 @@ package com.makingdevs.routes.utils
 
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
-
-import javax.activation.DataHandler
 import java.io.InputStream
 import java.io.BufferedReader
 import java.lang.StringBuilder
 /**
  * Created by neodevelop on 14/04/17.
  */
-class ProceessInvoiceDetail implements Processor {
+class ProcessInvoiceDetail implements Processor {
   @Override
   void process(Exchange exchange) throws Exception {
 
@@ -39,7 +37,7 @@ class ProceessInvoiceDetail implements Processor {
       def xmlParsed = new XmlParser().parseText(xml)
       def cfdiNs = new groovy.xml.Namespace("http://www.sat.gob.mx/cfd/3", "cfdi")
       def emitter = xmlParsed[cfdiNs.emisor].@nombre
-      detail.put("emitter", emitter[0])
+      detail.put("emitter", emitter.first())
         
       detail.put("expeditionDate", xmlParsed.@fecha)
       String concepts = ""
@@ -48,7 +46,7 @@ class ProceessInvoiceDetail implements Processor {
 
       detail.put("amount", xmlParsed.@total)
       def taxes = xmlParsed[cfdiNs.impuestos][cfdiNs.traslados][cfdiNs.traslado].@importe
-      detail.put("taxes", taxes[0])
+      detail.put("taxes", taxes.first())
       headers.putAll(detail)
       exchange.out.setHeaders(headers)
       exchange.out.setBody(exchange.in.body)
