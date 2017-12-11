@@ -4,8 +4,7 @@ import com.makingdevs.routes.utils.ProcessAttachments
 import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.dataformat.zipfile.ZipSplitter
-import org.apache.camel.Exchange
-import com.makingdevs.routes.utils.ProceessInvoiceDetail
+import com.makingdevs.routes.utils.ProcessInvoiceDetail
 
 /**
  * Created by makingdevs on 3/22/17.
@@ -24,7 +23,7 @@ class ZipRoute extends RouteBuilder {
       .routeId("processZip")
       .split(new ZipSplitter())
       .streaming()
-      .process(new ProceessInvoiceDetail())
+      .process(new ProcessInvoiceDetail())
       .to("direct:storeInLocal")
   }
 }

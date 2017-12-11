@@ -1,10 +1,9 @@
 package com.makingdevs.routes
 
-import com.makingdevs.routes.utils.ProceessInvoiceDetail
+import com.makingdevs.routes.utils.ProcessInvoiceDetail
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
 import org.apache.camel.LoggingLevel
-import org.apache.camel.Message
 import org.apache.camel.builder.RouteBuilder
 import java.util.ArrayList
 import java.util.regex.Matcher
@@ -53,7 +52,7 @@ class UberInvoiceRoute extends RouteBuilder {
         println "no match"
       }
     })
-    .process(new ProceessInvoiceDetail())
+    .process(new ProcessInvoiceDetail())
     .to("direct:storeInLocal")
     //.to("direct:processZip")
   }
