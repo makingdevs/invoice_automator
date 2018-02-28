@@ -48,7 +48,7 @@ class UberInvoiceRoute extends RouteBuilder {
     .routeId("uberInvoice")
     .process({ Exchange exchange ->
       String msg = exchange.in.getBody(String)
-      String regex = /https?:\/\/email.uber.com\/wf\/click.*{1}(?=\>)/
+      String regex = /https?:\/\/email.uber.com\/wf\/click.*{1}(?=">)/
       Matcher matcher = msg =~ regex
       if(matcher.size() > 0){
         exchange.out.setHeaders(exchange.in.headers)
