@@ -13,10 +13,12 @@ class ProcessLinkUber implements Processor {
   @Override
   void process(Exchange exchange) throws Exception {
     String link = exchange.in.body
+    byte[] data
+    def response
     try{
       def client = new RESTClient(link)
-      def response = client.get()
-      byte[] data = response.data
+      response = client.get()
+      data = response.data
     }catch (HTTPClientException e) {
       throw new RemovedLinkException("Another status code")
     }
