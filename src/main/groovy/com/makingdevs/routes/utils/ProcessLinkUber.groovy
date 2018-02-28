@@ -6,15 +6,20 @@ import wslite.rest.*
 import java.util.ArrayList
 import java.util.regex.Matcher
 import com.makingdevs.exception.RemovedLinkException
+import wslite.http.HTTPClientException
 
 class ProcessLinkUber implements Processor {
 
   @Override
   void process(Exchange exchange) throws Exception {
     String link = exchange.in.body
-    def client = new RESTClient(link)
-    def response = client.get()
-    byte[] data = response.data
+    try{
+      def client = new RESTClient(link)
+      def response = client.get()
+      byte[] data = response.data
+    }catch (HTTPClientException e) {
+      throw new RemovedLinkException("Another status code")
+    }
     exchange.out.setBody(data, data.class)
     Map headersWS = response.headers
     Map headers = exchange.in.headers
