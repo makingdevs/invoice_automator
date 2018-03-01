@@ -23,10 +23,19 @@ class UberInvoiceRoute extends RouteBuilder {
   void configure() {
 
     onException(NoLinkException)
+    .to("log:com.makingdevs.errorz?level=ERROR&multiline=true&maxChars=1000000")
     .process({ Exchange exchange ->
+      String msg = exchange.in.getBody(String)
+      String regex = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/
+      Matcher matcher = msg =~ regex
+      String infoError
+      if(matcher.size() > 0){
+        infoError = matcher[0]
+      }
       String message = """\
         No se puede procesar esta factura.
         No se encontraron los links
+        Correo Info: ${infoError ?: 'No data'}
       """.toString()
       exchange.out.setBody(message, String)
     })
@@ -34,10 +43,19 @@ class UberInvoiceRoute extends RouteBuilder {
     .to("telegram:bots/${configuration.get('telegram')['token']}?chatId=${configuration.get('telegram')['chatId']}")
 
     onException(RemovedLinkException)
+    .to("log:com.makingdevs.errorz?level=ERROR&multiline=true&maxChars=1000000")
     .process({ Exchange exchange ->
+      String msg = exchange.in.getBody(String)
+      String regex = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/
+      Matcher matcher = msg =~ regex
+      String infoError
+      if(matcher.size() > 0){
+        infoError = matcher[0]
+      }
       String message = """\
         No se puede procesar esta factura.
         Los links regresan un codigo de status diferente a 200
+        Correo Info: ${infoError ?: 'No data'}
       """.toString()
       exchange.out.setBody(message, String)
     })
@@ -48,11 +66,13 @@ class UberInvoiceRoute extends RouteBuilder {
     .routeId("uberInvoice")
     .process({ Exchange exchange ->
       String msg = exchange.in.getBody(String)
-      String regex = /https?:\/\/email.uber.com\/wf\/click.*{1}(?=">)/
+      String regex = /(https?:\/\/click.uber.com\/f\/a\/.*{1}(?=">)|https?:\/\/email.uber.com\/wf\/click.*{1}(?=">))/
       Matcher matcher = msg =~ regex
       if(matcher.size() > 0){
+        ArrayList matchGroup1 = (ArrayList)matcher[0]
+        ArrayList matchGroup2 = (ArrayList)matcher[1]
         exchange.out.setHeaders(exchange.in.headers)
-        exchange.out.setBody(matcher[0..1])
+        exchange.out.setBody([matchGroup1[0], matchGroup2[0]])
       }else{
         throw new NoLinkException("There are not links to download files")
       }
