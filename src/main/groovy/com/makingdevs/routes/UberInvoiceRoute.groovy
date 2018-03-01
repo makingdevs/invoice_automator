@@ -51,7 +51,7 @@ class UberInvoiceRoute extends RouteBuilder {
       String infoError
       if(matcher.size() > 0){
         infoError = matcher[0]
-      }q
+      }
       String message = """\
         No se puede procesar esta factura.
         Los links regresan un codigo de status diferente a 200
