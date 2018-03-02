@@ -54,7 +54,7 @@ class InvoiceRoute extends RouteBuilder {
           }
           oldExchange.in.setBody(oldBody + "\n" + newBody)
           oldExchange
-        } as AggregationStrategy).completionTimeout(3000L) // TODO: Arbitrary, deep learn!
+        } as AggregationStrategy).completionTimeout(3000L).completionSize(2) // TODO: Arbitrary, deep learn!
         .process { Exchange ex ->
           String message = """\
                                 Archivos: ${ex.in.body}
