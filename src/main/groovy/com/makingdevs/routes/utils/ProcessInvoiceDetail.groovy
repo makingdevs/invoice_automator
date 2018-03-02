@@ -5,6 +5,7 @@ import org.apache.camel.Processor
 import java.io.InputStream
 import java.io.BufferedReader
 import java.lang.StringBuilder
+import com.makingdevs.exception.XmlUnprocessableException
 /**
  * Created by neodevelop on 14/04/17.
  */
@@ -33,7 +34,10 @@ class ProcessInvoiceDetail implements Processor {
       while ((inline = inputReader.readLine()) != null) {
         sb.append(inline)
       }
-      String xml = sb.toString().trim().replaceFirst("^([\\W]+)<","<")toLowerCase()
+      String xml = sb.toString().trim().replaceFirst("^([\\W]+)<","<").toLowerCase()
+      if (xml.contains("<!doctype html>")) {
+        throw new XmlUnprocessableException("The content of XMl is unprocessable")
+      }
       def xmlParsed = new XmlParser().parseText(xml)
       def cfdiNs = new groovy.xml.Namespace("http://www.sat.gob.mx/cfd/3", "cfdi")
       def emitter = xmlParsed[cfdiNs.emisor].@nombre
