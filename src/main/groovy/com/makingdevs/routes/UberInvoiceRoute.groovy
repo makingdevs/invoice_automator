@@ -11,6 +11,7 @@ import java.util.ArrayList
 import java.util.regex.Matcher
 import com.makingdevs.exception.NoLinkException
 import com.makingdevs.exception.RemovedLinkException
+import com.makingdevs.exception.XmlUnprocessableException
 
 /**
  * Created by makingdevs on 3/22/17.
@@ -55,6 +56,26 @@ class UberInvoiceRoute extends RouteBuilder {
       String message = """\
         No se puede procesar esta factura.
         Los links regresan un codigo de status diferente a 200
+        Correo Info: ${infoError ?: 'No data'}
+      """.toString()
+      exchange.out.setBody(message, String)
+    })
+    .handled(true)
+    .to("telegram:bots/${configuration.get('telegram')['token']}?chatId=${configuration.get('telegram')['chatId']}")
+
+    onException(XmlUnprocessableException)
+    .to("log:com.makingdevs.errorz?level=ERROR&multiline=true&maxChars=1000000")
+    .process({ Exchange exchange ->
+      String msg = exchange.in.getBody(String)
+      String regex = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/
+      Matcher matcher = msg =~ regex
+      String infoError
+      if(matcher.size() > 0){
+        infoError = matcher[0]
+      }
+      String message = """\
+        No se puede procesar esta factura.
+        El Xml es improcesable
         Correo Info: ${infoError ?: 'No data'}
       """.toString()
       exchange.out.setBody(message, String)
